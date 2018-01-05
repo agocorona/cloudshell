@@ -1,7 +1,7 @@
 Global idea is described [here](https://gitter.im/Transient-Transient-Universe-HPlay/Ideas?at=597a2a65f5b3458e308a370e)
 
 Case scenarios/usage examples: [this](https://gitter.im/Transient-Transient-Universe-HPlay/Ideas?at=597a61f42723db8d5e521403) [this](https://gitter.im/Transient-Transient-Universe-HPlay/Ideas?at=59fcef7e4ff065ac18b255c6)
- and[this](https://gitter.im/Transient-Transient-Universe-HPlay/cloudshell?at=5a26cbd83ae2aa6b3f8d0a96)
+ and [this](https://gitter.im/Transient-Transient-Universe-HPlay/cloudshell?at=5a26cbd83ae2aa6b3f8d0a96)
 
 on-going ideas, progress report and discussion: [here](https://gitter.im/Transient-Transient-Universe-HPlay/cloudshell)
 
