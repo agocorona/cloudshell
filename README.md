@@ -1,12 +1,12 @@
 Global idea is described [here](https://gitter.im/Transient-Transient-Universe-HPlay/Ideas?at=597a2a65f5b3458e308a370e)
 
-Case scenarios [this](https://gitter.im/Transient-Transient-Universe-HPlay/Ideas?at=597a61f42723db8d5e521403) [this](https://gitter.im/Transient-Transient-Universe-HPlay/Ideas?at=59fcef7e4ff065ac18b255c6)
- [this](https://gitter.im/Transient-Transient-Universe-HPlay/cloudshell?at=5a26cbd83ae2aa6b3f8d0a96)
+Case scenarios/usage examples: [this](https://gitter.im/Transient-Transient-Universe-HPlay/Ideas?at=597a61f42723db8d5e521403) [this](https://gitter.im/Transient-Transient-Universe-HPlay/Ideas?at=59fcef7e4ff065ac18b255c6)
+ and[this](https://gitter.im/Transient-Transient-Universe-HPlay/cloudshell?at=5a26cbd83ae2aa6b3f8d0a96)
 
 on-going ideas, progress report and discussion: [here](https://gitter.im/Transient-Transient-Universe-HPlay/cloudshell)
 
 
-> Staring from the Unix shell, these are the shortcomings found about the Unix shell philosophy `a | b | c`  that should be fixed:
+Staring from the Unix shell, these are the shortcomings found about the Unix shell philosophy `a | b | c`  that should be fixed:
 
 - No feedback: no upstream communications: b can not communicate with a. No out-of-flow communications in general 
 - No reactivity.  b or c can not generate events. a is the only initiator in the form of a stream. No individual events
