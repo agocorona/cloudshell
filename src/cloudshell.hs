@@ -1,7 +1,7 @@
-{-# LANGUAGE MultiParamTypeClasses, ScopedTypeVariables, TypeSynonymInstances, FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses, FlexibleContexts, ScopedTypeVariables, TypeSynonymInstances, FlexibleInstances #-}
 module Cloudshell where
 import qualified Data.Map as M
-import Transient.Internals
+import Transient.Internals hiding (read1, fork)
 import Transient.Indeterminism
 import Transient.Move.Internals
 import Transient.Move.Utils
@@ -28,7 +28,7 @@ import Network.HTTP
 import Data.Maybe
 import Data.Monoid
 import Control.Concurrent
-
+import qualified Data.ByteString.Char8 as BS 
 import Debug.Trace
 {-
 
@@ -306,8 +306,6 @@ toMap desc= map break1 $ lines desc
     let (k,v1)= break (== ' ') line
     in (k,dropWhile (== ' ') v1)
 
-emptyIfNothing ::  Maybe a -> TransIO a
-emptyIfNothing mx=  Transient  $ return mx
 
 emptyIfNothing' mx= emptyIfNothing mx <|> pempty
 
@@ -416,7 +414,7 @@ invoke1 desc arg= do
   tryService name arg= do
       map <- localIO $ (readIORef configurations >>= return . M.lookup name) `onNothing` error name
       local $ emptyIfNothing $ lookup "service" map
-      callService "" map arg
+      callService  map arg
 
   tryDockerService  name arg= loggedc $ do
       conf    <- localIO $ (readIORef configurations >>= return . M.lookup name ) `onNothing`  error "noname"
@@ -430,9 +428,9 @@ invoke1 desc arg= do
       monitorNode <- localIO $ createNodeServ host port monitorService
       local $ addNodes [monitorNode]
       localIO $ callProcess path [subst "run  -p $3:3001  $1 monitorService -p start $2/$3" image host port]
-      nodes <- callService' "ident" monitorNode ("ident",conf,(1 :: Int))
+      nodes <- callService'  monitorNode ("ident",conf,(1 :: Int))
       local $ addNodes nodes
-      callService "" conf arg
+      callService conf arg
 
 
 newtype InvokeList= InvokeList (M.Map String EventF) deriving Typeable
@@ -682,6 +680,7 @@ subst :: Subst1 a r => String -> a -> r
 subst expr= subst1 expr 1
 
 data LocalVars = LocalVars (M.Map String String) deriving (Typeable, Read, Show)
+instance Loggable LocalVars
 
 newVar :: (Show a, Typeable a) => String -> a -> TransIO ()
 newVar  name val= noTrans $ do 
@@ -705,13 +704,13 @@ type IdGroup= String
 type ProcessEntry= (Node,IdGroup, IdProcess,Url)
 data ProcessLog = ProcessLog  MBoxId  deriving (Typeable,Read,Show)
 
-
+instance Loggable ProcessLog
 
 readCreateProcess proc _ = do
    onException $ \(e :: SomeException) -> liftIO $ print e
    (_, Just out,Just err,ph) <- async $ createProcess $  proc{std_out = CreatePipe,std_err = CreatePipe}
    let ShellCommand str= cmdspec proc
-   labelState str 
+   labelState $ BS.pack str 
    return () !> "READCREATEPROCESS"
    ProcessLog processes <-  getState <|>  error "NO PROCESSLOG"
    let idProcess = processes ++ show (hash str)
@@ -760,7 +759,7 @@ showLog  =  do
              "Status: ExitSuccess" -> return ()
              _ -> do  
                   mln <- wormhole node $ do
-                          stopRemoteJob "streamlog"
+                          stopRemoteJob $ BS.pack"streamlog"
                           atRemote . local $ getMailbox' idProcess 
                   localIO $ putStrLn mln
 
